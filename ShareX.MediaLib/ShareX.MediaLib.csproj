@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ShareX.MediaLib</RootNamespace>
     <AssemblyName>ShareX.MediaLib</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -70,6 +70,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -81,9 +82,11 @@
     <Compile Include="..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DirectShowDevices.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="FFmpegCLIManager.cs" />
     <Compile Include="FFmpegDownloader.cs" />
+    <Compile Include="FFmpegGitHubDownloader.cs" />
     <Compile Include="Forms\ImageCombinerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,6 +105,12 @@
     <Compile Include="Forms\ImageThumbnailerForm.Designer.cs">
       <DependentUpon>ImageThumbnailerForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\VideoConverterForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\VideoConverterForm.Designer.cs">
+      <DependentUpon>VideoConverterForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\VideoThumbnailerForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -114,6 +123,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="VideoConverterOptions.cs" />
     <Compile Include="VideoThumbnailInfo.cs" />
     <Compile Include="VideoInfo.cs" />
     <Compile Include="VideoThumbnailer.cs" />
@@ -154,6 +164,9 @@
     <EmbeddedResource Include="Forms\ImageCombinerForm.pt-BR.resx">
       <DependentUpon>ImageCombinerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImageCombinerForm.pt-PT.resx">
+      <DependentUpon>ImageCombinerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ImageCombinerForm.resx">
       <DependentUpon>ImageCombinerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -175,7 +188,22 @@
     <EmbeddedResource Include="Forms\ImageCombinerForm.zh-TW.resx">
       <DependentUpon>ImageCombinerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImageSplitterForm.es-MX.resx">
+      <DependentUpon>ImageSplitterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImageSplitterForm.fr.resx">
+      <DependentUpon>ImageSplitterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImageSplitterForm.pt-PT.resx">
+      <DependentUpon>ImageSplitterForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ImageSplitterForm.resx">
+      <DependentUpon>ImageSplitterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImageSplitterForm.ru.resx">
+      <DependentUpon>ImageSplitterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImageSplitterForm.uk.resx">
       <DependentUpon>ImageSplitterForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ImageThumbnailerForm.de.resx">
@@ -196,6 +224,9 @@
     <EmbeddedResource Include="Forms\ImageThumbnailerForm.ko-KR.resx">
       <DependentUpon>ImageThumbnailerForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImageThumbnailerForm.pt-PT.resx">
+      <DependentUpon>ImageThumbnailerForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ImageThumbnailerForm.resx">
       <DependentUpon>ImageThumbnailerForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -203,6 +234,9 @@
       <DependentUpon>ImageThumbnailerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ImageThumbnailerForm.tr.resx">
+      <DependentUpon>ImageThumbnailerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ImageThumbnailerForm.uk.resx">
       <DependentUpon>ImageThumbnailerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ImageThumbnailerForm.vi-VN.resx">
@@ -213,6 +247,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ImageThumbnailerForm.zh-TW.resx">
       <DependentUpon>ImageThumbnailerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoConverterForm.fr.resx">
+      <DependentUpon>VideoConverterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoConverterForm.pt-PT.resx">
+      <DependentUpon>VideoConverterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoConverterForm.resx">
+      <DependentUpon>VideoConverterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoConverterForm.ru.resx">
+      <DependentUpon>VideoConverterForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoConverterForm.uk.resx">
+      <DependentUpon>VideoConverterForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\VideoThumbnailerForm.de.resx">
       <DependentUpon>VideoThumbnailerForm.cs</DependentUpon>
@@ -239,6 +288,9 @@
       <DependentUpon>VideoThumbnailerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\VideoThumbnailerForm.pt-BR.resx">
+      <DependentUpon>VideoThumbnailerForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\VideoThumbnailerForm.pt-PT.resx">
       <DependentUpon>VideoThumbnailerForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\VideoThumbnailerForm.resx">
@@ -271,6 +323,7 @@
     <EmbeddedResource Include="Properties\Resources.ko-KR.resx" />
     <EmbeddedResource Include="Properties\Resources.nl-NL.resx" />
     <EmbeddedResource Include="Properties\Resources.pt-BR.resx" />
+    <EmbeddedResource Include="Properties\Resources.pt-PT.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

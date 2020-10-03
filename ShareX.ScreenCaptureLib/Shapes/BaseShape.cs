@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -185,6 +185,22 @@ namespace ShareX.ScreenCaptureLib
             Move(offset.X, offset.Y);
         }
 
+        public void MoveAbsolute(int x, int y, bool center = false)
+        {
+            if (center)
+            {
+                x -= Rectangle.Size.Width / 2;
+                y -= Rectangle.Size.Height / 2;
+            }
+
+            Move(x - Rectangle.X, y - Rectangle.Y);
+        }
+
+        public void MoveAbsolute(Point point, bool center = false)
+        {
+            MoveAbsolute(point.X, point.Y, center);
+        }
+
         public virtual void Resize(int x, int y, bool fromBottomRight)
         {
             if (fromBottomRight)
@@ -195,6 +211,16 @@ namespace ShareX.ScreenCaptureLib
             {
                 Rectangle = Rectangle.LocationOffset(x, y).SizeOffset(-x, -y);
             }
+        }
+
+        public virtual BaseShape Duplicate()
+        {
+            ShapeManager manager = Manager;
+            Manager = null;
+            BaseShape shape = this.Copy();
+            Manager = manager;
+            shape.Manager = manager;
+            return shape;
         }
 
         public virtual void OnCreating()

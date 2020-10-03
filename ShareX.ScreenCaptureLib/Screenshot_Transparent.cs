@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -35,7 +35,7 @@ namespace ShareX.ScreenCaptureLib
 {
     public partial class Screenshot
     {
-        public Image CaptureWindowTransparent(IntPtr handle)
+        public Bitmap CaptureWindowTransparent(IntPtr handle)
         {
             if (handle.ToInt32() > 0)
             {
@@ -93,17 +93,17 @@ namespace ShareX.ScreenCaptureLib
                         Thread.Sleep(10);
                         Application.DoEvents();
 
-                        whiteBackground = (Bitmap)CaptureRectangleNative(rect);
+                        whiteBackground = CaptureRectangleNative(rect);
 
                         form.BackColor = Color.Black;
                         Application.DoEvents();
 
-                        blackBackground = (Bitmap)CaptureRectangleNative(rect);
+                        blackBackground = CaptureRectangleNative(rect);
 
                         form.BackColor = Color.White;
                         Application.DoEvents();
 
-                        whiteBackground2 = (Bitmap)CaptureRectangleNative(rect);
+                        whiteBackground2 = CaptureRectangleNative(rect);
 
                         form.Close();
                     }
@@ -154,7 +154,7 @@ namespace ShareX.ScreenCaptureLib
             return null;
         }
 
-        public Image CaptureActiveWindowTransparent()
+        public Bitmap CaptureActiveWindowTransparent()
         {
             IntPtr handle = NativeMethods.GetForegroundWindow();
 

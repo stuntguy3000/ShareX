@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -137,7 +137,7 @@ namespace ShareX
 
         public void UpdateTheme()
         {
-            if (ShareXResources.UseDarkTheme)
+            if (ShareXResources.UseCustomTheme)
             {
                 BackColor = ShareXResources.Theme.BackgroundColor;
             }
@@ -155,11 +155,12 @@ namespace ShareX
         private TaskThumbnailPanel CreatePanel(WorkerTask task)
         {
             TaskThumbnailPanel panel = new TaskThumbnailPanel(task);
-            panel.MouseEnter += FlpMain_MouseEnter;
-            panel.MouseUp += (object sender, MouseEventArgs e) => Panel_MouseUp(sender, e, panel);
             panel.ThumbnailSize = ThumbnailSize;
             panel.TitleVisible = TitleVisible;
             panel.TitleLocation = TitleLocation;
+            panel.MouseEnter += Panel_MouseEnter;
+            panel.MouseDown += (object sender, MouseEventArgs e) => Panel_MouseDown(sender, e, panel);
+            panel.MouseUp += Panel_MouseUp;
             return panel;
         }
 
@@ -205,12 +206,12 @@ namespace ShareX
         {
             SelectedPanels.Clear();
 
-            OnSelectedPanelChanged();
-
             foreach (TaskThumbnailPanel panel in Panels)
             {
                 panel.Selected = false;
             }
+
+            OnSelectedPanelChanged();
         }
 
         protected void OnContextMenuRequested(object sender, MouseEventArgs e)
@@ -223,7 +224,7 @@ namespace ShareX
             SelectedPanelChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        private void FlpMain_MouseEnter(object sender, EventArgs e)
+        private void Panel_MouseEnter(object sender, EventArgs e)
         {
             // Workaround to handle mouse wheel scrolling in Windows 7
             if (NativeMethods.GetForegroundWindow() == ParentForm.Handle && !flpMain.Focused)
@@ -232,17 +233,12 @@ namespace ShareX
             }
         }
 
-        private void FlpMain_MouseDown(object sender, MouseEventArgs e)
+        private void Panel_MouseDown(object sender, MouseEventArgs e)
         {
-            UnselectAllPanels();
+            Panel_MouseDown(sender, e, null);
         }
 
-        private void TaskThumbnailView_MouseUp(object sender, MouseEventArgs e)
-        {
-            Panel_MouseUp(sender, e, null);
-        }
-
-        private void Panel_MouseUp(object sender, MouseEventArgs e, TaskThumbnailPanel panel)
+        private void Panel_MouseDown(object sender, MouseEventArgs e, TaskThumbnailPanel panel)
         {
             if (panel == null)
             {
@@ -264,9 +260,29 @@ namespace ShareX
                         SelectedPanels.Add(panel);
                     }
                 }
+                else if (ModifierKeys == Keys.Shift)
+                {
+                    if (SelectedPanels.Count > 0)
+                    {
+                        TaskThumbnailPanel firstPanel = SelectedPanels[0];
+
+                        UnselectAllPanels();
+
+                        foreach (TaskThumbnailPanel p in Panels.Range(firstPanel, panel))
+                        {
+                            p.Selected = true;
+                            SelectedPanels.Add(p);
+                        }
+                    }
+                    else
+                    {
+                        panel.Selected = true;
+                        SelectedPanels.Add(panel);
+                    }
+                }
                 else
                 {
-                    if (!panel.Selected)
+                    if (!panel.Selected || e.Button == MouseButtons.Left)
                     {
                         UnselectAllPanels();
                         panel.Selected = true;
@@ -276,8 +292,11 @@ namespace ShareX
             }
 
             OnSelectedPanelChanged();
+        }
 
-            if (ModifierKeys != Keys.Control && e.Button == MouseButtons.Right)
+        private void Panel_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
             {
                 OnContextMenuRequested(sender, e);
             }

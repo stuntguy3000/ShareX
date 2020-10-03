@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -23,6 +23,7 @@
 
 #endregion License Information (GPL v3)
 
+using ShareX.HelpersLib;
 using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
@@ -34,7 +35,7 @@ namespace ShareX.ScreenCaptureLib
         public override ShapeType ShapeType { get; } = ShapeType.DrawingMagnify;
 
         public int MagnifyStrength { get; set; } = 200;
-        public ImageEditorInterpolationMode ImageInterpolationMode { get; set; }
+        public ImageInterpolationMode ImageInterpolationMode { get; set; }
 
         public MagnifyDrawingShape()
         {
@@ -58,7 +59,7 @@ namespace ShareX.ScreenCaptureLib
         public override void OnDraw(Graphics g)
         {
             g.PixelOffsetMode = PixelOffsetMode.Half;
-            g.InterpolationMode = Manager.GetInterpolationMode(ImageInterpolationMode);
+            g.InterpolationMode = ImageHelpers.GetInterpolationMode(ImageInterpolationMode);
 
             using (GraphicsPath gp = new GraphicsPath())
             {

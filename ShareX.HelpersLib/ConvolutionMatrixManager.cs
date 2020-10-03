@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -35,12 +35,12 @@ namespace ShareX.HelpersLib
 {
     public static class ConvolutionMatrixManager
     {
-        public static Image Apply(this ConvolutionMatrix kernel, Image img)
+        public static Bitmap Apply(this ConvolutionMatrix kernel, Bitmap bmp)
         {
-            Bitmap result = (Bitmap)img.Clone();
+            Bitmap bmpResult = (Bitmap)bmp.Clone();
 
-            using (UnsafeBitmap source = new UnsafeBitmap((Bitmap)img, true, ImageLockMode.ReadOnly))
-            using (UnsafeBitmap dest = new UnsafeBitmap(result, true, ImageLockMode.WriteOnly))
+            using (UnsafeBitmap source = new UnsafeBitmap(bmp, true, ImageLockMode.ReadOnly))
+            using (UnsafeBitmap dest = new UnsafeBitmap(bmpResult, true, ImageLockMode.WriteOnly))
             {
                 int originX = (kernel.Width - 1) / 2;
                 int originY = (kernel.Height - 1) / 2;
@@ -96,23 +96,12 @@ namespace ShareX.HelpersLib
                             a = a.Clamp(0, 255);
                         }
 
-                        dest.SetPixel(
-                            x,
-                            y,
-                            new ColorBgra(
-                                (byte)b,
-                                (byte)g,
-                                (byte)r,
-                                kernel.ConsiderAlpha
-                                    ? (byte)a
-                                    : source.GetPixel(x, y).Alpha
-                            )
-                        );
+                        dest.SetPixel(x, y, new ColorBgra((byte)b, (byte)g, (byte)r, kernel.ConsiderAlpha ? (byte)a : source.GetPixel(x, y).Alpha));
                     });
                 });
             }
 
-            return result;
+            return bmpResult;
         }
 
         public static ConvolutionMatrix Smooth(int weight = 1)

@@ -58,10 +58,8 @@ namespace ShareX
             this.btnThemeRemove = new System.Windows.Forms.Button();
             this.btnThemeAdd = new System.Windows.Forms.Button();
             this.cbThemes = new System.Windows.Forms.ComboBox();
-            this.cbExperimentalDarkTheme = new System.Windows.Forms.CheckBox();
-            this.btnApplyTheme = new System.Windows.Forms.Button();
             this.pgTheme = new System.Windows.Forms.PropertyGrid();
-            this.cbUseDarkTheme = new System.Windows.Forms.CheckBox();
+            this.cbUseCustomTheme = new System.Windows.Forms.CheckBox();
             this.tpIntegration = new System.Windows.Forms.TabPage();
             this.gbFirefox = new System.Windows.Forms.GroupBox();
             this.cbFirefoxAddonSupport = new System.Windows.Forms.CheckBox();
@@ -90,7 +88,11 @@ namespace ShareX
             this.lblSaveImageSubFolderPattern = new System.Windows.Forms.Label();
             this.lblSaveImageSubFolderPatternPreview = new System.Windows.Forms.Label();
             this.txtSaveImageSubFolderPattern = new System.Windows.Forms.TextBox();
-            this.tpExportImport = new System.Windows.Forms.TabPage();
+            this.tpSettings = new System.Windows.Forms.TabPage();
+            this.pbExportImportNote = new System.Windows.Forms.PictureBox();
+            this.cbExportHistory = new System.Windows.Forms.CheckBox();
+            this.cbExportSettings = new System.Windows.Forms.CheckBox();
+            this.lblExportImportNote = new System.Windows.Forms.Label();
             this.btnResetSettings = new System.Windows.Forms.Button();
             this.pbExportImport = new System.Windows.Forms.ProgressBar();
             this.btnExport = new System.Windows.Forms.Button();
@@ -153,7 +155,6 @@ namespace ShareX
             this.tpAdvanced = new System.Windows.Forms.TabPage();
             this.pgSettings = new System.Windows.Forms.PropertyGrid();
             this.tttvMain = new ShareX.HelpersLib.TabToTreeView();
-            this.lblExportImportNote = new System.Windows.Forms.Label();
             this.tcSettings.SuspendLayout();
             this.tpGeneral.SuspendLayout();
             this.tpTheme.SuspendLayout();
@@ -163,7 +164,8 @@ namespace ShareX
             this.gbChrome.SuspendLayout();
             this.gbWindows.SuspendLayout();
             this.tpPaths.SuspendLayout();
-            this.tpExportImport.SuspendLayout();
+            this.tpSettings.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbExportImportNote)).BeginInit();
             this.tpUpload.SuspendLayout();
             this.tcUpload.SuspendLayout();
             this.tpPerformance.SuspendLayout();
@@ -192,7 +194,7 @@ namespace ShareX
             this.tcSettings.Controls.Add(this.tpTheme);
             this.tcSettings.Controls.Add(this.tpIntegration);
             this.tcSettings.Controls.Add(this.tpPaths);
-            this.tcSettings.Controls.Add(this.tpExportImport);
+            this.tcSettings.Controls.Add(this.tpSettings);
             this.tcSettings.Controls.Add(this.tpUpload);
             this.tcSettings.Controls.Add(this.tpHistory);
             this.tcSettings.Controls.Add(this.tpPrint);
@@ -358,10 +360,8 @@ namespace ShareX
             this.tpTheme.Controls.Add(this.btnThemeRemove);
             this.tpTheme.Controls.Add(this.btnThemeAdd);
             this.tpTheme.Controls.Add(this.cbThemes);
-            this.tpTheme.Controls.Add(this.cbExperimentalDarkTheme);
-            this.tpTheme.Controls.Add(this.btnApplyTheme);
             this.tpTheme.Controls.Add(this.pgTheme);
-            this.tpTheme.Controls.Add(this.cbUseDarkTheme);
+            this.tpTheme.Controls.Add(this.cbUseCustomTheme);
             resources.ApplyResources(this.tpTheme, "tpTheme");
             this.tpTheme.Name = "tpTheme";
             this.tpTheme.UseVisualStyleBackColor = true;
@@ -379,6 +379,7 @@ namespace ShareX
             resources.ApplyResources(this.eiTheme, "eiTheme");
             this.eiTheme.Name = "eiTheme";
             this.eiTheme.ObjectType = null;
+            this.eiTheme.SerializationBinder = null;
             this.eiTheme.ExportRequested += new ShareX.HelpersLib.ExportImportControl.ExportEventHandler(this.EiTheme_ExportRequested);
             this.eiTheme.ImportRequested += new ShareX.HelpersLib.ExportImportControl.ImportEventHandler(this.EiTheme_ImportRequested);
             // 
@@ -404,33 +405,20 @@ namespace ShareX
             this.cbThemes.Name = "cbThemes";
             this.cbThemes.SelectedIndexChanged += new System.EventHandler(this.CbThemes_SelectedIndexChanged);
             // 
-            // cbExperimentalDarkTheme
-            // 
-            resources.ApplyResources(this.cbExperimentalDarkTheme, "cbExperimentalDarkTheme");
-            this.cbExperimentalDarkTheme.Name = "cbExperimentalDarkTheme";
-            this.cbExperimentalDarkTheme.UseVisualStyleBackColor = true;
-            this.cbExperimentalDarkTheme.CheckedChanged += new System.EventHandler(this.CbExperimentalDarkTheme_CheckedChanged);
-            // 
-            // btnApplyTheme
-            // 
-            resources.ApplyResources(this.btnApplyTheme, "btnApplyTheme");
-            this.btnApplyTheme.Name = "btnApplyTheme";
-            this.btnApplyTheme.UseVisualStyleBackColor = true;
-            this.btnApplyTheme.Click += new System.EventHandler(this.BtnApplyTheme_Click);
-            // 
             // pgTheme
             // 
             resources.ApplyResources(this.pgTheme, "pgTheme");
             this.pgTheme.Name = "pgTheme";
             this.pgTheme.PropertySort = System.Windows.Forms.PropertySort.NoSort;
             this.pgTheme.ToolbarVisible = false;
+            this.pgTheme.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.pgTheme_PropertyValueChanged);
             // 
-            // cbUseDarkTheme
+            // cbUseCustomTheme
             // 
-            resources.ApplyResources(this.cbUseDarkTheme, "cbUseDarkTheme");
-            this.cbUseDarkTheme.Name = "cbUseDarkTheme";
-            this.cbUseDarkTheme.UseVisualStyleBackColor = true;
-            this.cbUseDarkTheme.CheckedChanged += new System.EventHandler(this.CbUseDarkTheme_CheckedChanged);
+            resources.ApplyResources(this.cbUseCustomTheme, "cbUseCustomTheme");
+            this.cbUseCustomTheme.Name = "cbUseCustomTheme";
+            this.cbUseCustomTheme.UseVisualStyleBackColor = true;
+            this.cbUseCustomTheme.CheckedChanged += new System.EventHandler(this.CbUseCustomTheme_CheckedChanged);
             // 
             // tpIntegration
             // 
@@ -637,16 +625,49 @@ namespace ShareX
             this.txtSaveImageSubFolderPattern.Name = "txtSaveImageSubFolderPattern";
             this.txtSaveImageSubFolderPattern.TextChanged += new System.EventHandler(this.txtSaveImageSubFolderPattern_TextChanged);
             // 
-            // tpExportImport
+            // tpSettings
             // 
-            this.tpExportImport.BackColor = System.Drawing.SystemColors.Window;
-            this.tpExportImport.Controls.Add(this.lblExportImportNote);
-            this.tpExportImport.Controls.Add(this.btnResetSettings);
-            this.tpExportImport.Controls.Add(this.pbExportImport);
-            this.tpExportImport.Controls.Add(this.btnExport);
-            this.tpExportImport.Controls.Add(this.btnImport);
-            resources.ApplyResources(this.tpExportImport, "tpExportImport");
-            this.tpExportImport.Name = "tpExportImport";
+            this.tpSettings.BackColor = System.Drawing.SystemColors.Window;
+            this.tpSettings.Controls.Add(this.pbExportImportNote);
+            this.tpSettings.Controls.Add(this.cbExportHistory);
+            this.tpSettings.Controls.Add(this.cbExportSettings);
+            this.tpSettings.Controls.Add(this.lblExportImportNote);
+            this.tpSettings.Controls.Add(this.btnResetSettings);
+            this.tpSettings.Controls.Add(this.pbExportImport);
+            this.tpSettings.Controls.Add(this.btnExport);
+            this.tpSettings.Controls.Add(this.btnImport);
+            resources.ApplyResources(this.tpSettings, "tpSettings");
+            this.tpSettings.Name = "tpSettings";
+            // 
+            // pbExportImportNote
+            // 
+            this.pbExportImportNote.Image = global::ShareX.Properties.Resources.exclamation;
+            resources.ApplyResources(this.pbExportImportNote, "pbExportImportNote");
+            this.pbExportImportNote.Name = "pbExportImportNote";
+            this.pbExportImportNote.TabStop = false;
+            // 
+            // cbExportHistory
+            // 
+            resources.ApplyResources(this.cbExportHistory, "cbExportHistory");
+            this.cbExportHistory.Checked = true;
+            this.cbExportHistory.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbExportHistory.Name = "cbExportHistory";
+            this.cbExportHistory.UseVisualStyleBackColor = true;
+            this.cbExportHistory.CheckedChanged += new System.EventHandler(this.cbExportHistory_CheckedChanged);
+            // 
+            // cbExportSettings
+            // 
+            resources.ApplyResources(this.cbExportSettings, "cbExportSettings");
+            this.cbExportSettings.Checked = true;
+            this.cbExportSettings.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbExportSettings.Name = "cbExportSettings";
+            this.cbExportSettings.UseVisualStyleBackColor = true;
+            this.cbExportSettings.CheckedChanged += new System.EventHandler(this.cbExportSettings_CheckedChanged);
+            // 
+            // lblExportImportNote
+            // 
+            resources.ApplyResources(this.lblExportImportNote, "lblExportImportNote");
+            this.lblExportImportNote.Name = "lblExportImportNote";
             // 
             // btnResetSettings
             // 
@@ -1136,15 +1157,10 @@ namespace ShareX
             this.tttvMain.TreeViewSize = 175;
             this.tttvMain.TabChanged += new ShareX.HelpersLib.TabToTreeView.TabChangedEventHandler(this.tttvMain_TabChanged);
             // 
-            // lblExportImportNote
-            // 
-            resources.ApplyResources(this.lblExportImportNote, "lblExportImportNote");
-            this.lblExportImportNote.Name = "lblExportImportNote";
-            // 
             // ApplicationSettingsForm
             // 
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.Controls.Add(this.tcSettings);
             this.Controls.Add(this.tttvMain);
@@ -1168,7 +1184,9 @@ namespace ShareX
             this.gbWindows.PerformLayout();
             this.tpPaths.ResumeLayout(false);
             this.tpPaths.PerformLayout();
-            this.tpExportImport.ResumeLayout(false);
+            this.tpSettings.ResumeLayout(false);
+            this.tpSettings.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pbExportImportNote)).EndInit();
             this.tpUpload.ResumeLayout(false);
             this.tcUpload.ResumeLayout(false);
             this.tpPerformance.ResumeLayout(false);
@@ -1281,7 +1299,7 @@ namespace ShareX
         private System.Windows.Forms.CheckBox cbSteamShowInApp;
         private System.Windows.Forms.TabPage tpIntegration;
         private System.Windows.Forms.GroupBox gbSteam;
-        private System.Windows.Forms.TabPage tpExportImport;
+        private System.Windows.Forms.TabPage tpSettings;
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Button btnExport;
         private System.Windows.Forms.ProgressBar pbExportImport;
@@ -1313,11 +1331,9 @@ namespace ShareX
         private System.Windows.Forms.CheckBox cbEditWithShareX;
         private System.Windows.Forms.Button btnCheckDevBuild;
         private System.Windows.Forms.Button btnPersonalFolderPathApply;
-        private System.Windows.Forms.CheckBox cbUseDarkTheme;
+        private System.Windows.Forms.CheckBox cbUseCustomTheme;
         private System.Windows.Forms.CheckBox cbUseWhiteShareXIcon;
-        private System.Windows.Forms.CheckBox cbExperimentalDarkTheme;
         private System.Windows.Forms.TabPage tpTheme;
-        private System.Windows.Forms.Button btnApplyTheme;
         private System.Windows.Forms.PropertyGrid pgTheme;
         private System.Windows.Forms.ComboBox cbThemes;
         private System.Windows.Forms.Button btnThemeRemove;
@@ -1325,5 +1341,8 @@ namespace ShareX
         private ExportImportControl eiTheme;
         private System.Windows.Forms.Button btnThemeReset;
         private System.Windows.Forms.Label lblExportImportNote;
+        private System.Windows.Forms.CheckBox cbExportHistory;
+        private System.Windows.Forms.CheckBox cbExportSettings;
+        private System.Windows.Forms.PictureBox pbExportImportNote;
     }
 }

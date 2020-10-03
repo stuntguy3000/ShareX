@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -26,6 +26,7 @@
 // Credits: https://github.com/lithium720
 
 using Newtonsoft.Json;
+using ShareX.HelpersLib;
 using ShareX.UploadersLib.Properties;
 using System;
 using System.Collections.Generic;
@@ -72,7 +73,7 @@ namespace ShareX.UploadersLib.FileUploaders
             Dictionary<string, string> args = new Dictionary<string, string>();
             args.Add("api_key", Config.UserAPIKey);
 
-            UploadResult result = SendRequestFile("https://lithi.io/api/v2/upload.php", stream, fileName, "file", args);
+            UploadResult result = SendRequestFile("https://lithi.io/api/v2/upload", stream, fileName, "file", args);
 
             if (result.IsSuccess)
             {
@@ -97,7 +98,7 @@ namespace ShareX.UploadersLib.FileUploaders
             args.Add("email", email);
             args.Add("password", password);
 
-            string response = SendRequestMultiPart("https://lithi.io/api/v2/fetch-api-key.php", args);
+            string response = SendRequestMultiPart("https://lithi.io/api/v2/fetch-api-key", args);
 
             if (!string.IsNullOrEmpty(response))
             {
@@ -135,6 +136,7 @@ namespace ShareX.UploadersLib.FileUploaders
 
     public class LithiioSettings
     {
+        [JsonEncrypt]
         public string UserAPIKey { get; set; } = "";
     }
 }

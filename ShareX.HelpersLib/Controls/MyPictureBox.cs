@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -177,10 +177,12 @@ namespace ShareX.HelpersLib
 
         public void UpdateTheme()
         {
-            if (ShareXResources.UseDarkTheme)
+            if (ShareXResources.UseCustomTheme)
             {
                 lblImageSize.BackColor = ShareXResources.Theme.BackgroundColor;
                 lblImageSize.ForeColor = ShareXResources.Theme.TextColor;
+
+                ShareXResources.ApplyCustomThemeToContextMenuStrip(cmsMenu);
             }
             else
             {
@@ -197,8 +199,16 @@ namespace ShareX.HelpersLib
                 {
                     if (pbMain.BackgroundImage != null) pbMain.BackgroundImage.Dispose();
 
-                    pbMain.BackgroundImage = ImageHelpers.CreateCheckerPattern(ShareXResources.Theme.CheckerSize, ShareXResources.Theme.CheckerSize,
-                        ShareXResources.Theme.CheckerColor, ShareXResources.Theme.CheckerColor2);
+                    if (ShareXResources.Theme.CheckerSize > 0)
+                    {
+                        pbMain.BackgroundImage = ImageHelpers.CreateCheckerPattern(ShareXResources.Theme.CheckerSize, ShareXResources.Theme.CheckerSize,
+                            ShareXResources.Theme.CheckerColor, ShareXResources.Theme.CheckerColor2);
+                    }
+                    else
+                    {
+                        pbMain.BackColor = ShareXResources.Theme.CheckerColor;
+                        pbMain.BackgroundImage = null;
+                    }
                 }
             }
             else

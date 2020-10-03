@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -72,8 +72,6 @@ namespace ShareX
         public bool SilentRun = false;
         public bool TrayIconProgressEnabled = true;
         public bool TaskbarProgressEnabled = true;
-        public bool UseDarkTheme = true;
-        public bool ExperimentalDarkTheme = false;
         public bool UseWhiteShareXIcon = false;
         public bool RememberMainFormPosition = false;
         public Point MainFormPosition = Point.Empty;
@@ -82,7 +80,7 @@ namespace ShareX
 
         public HotkeyType TrayLeftClickAction = HotkeyType.RectangleRegion;
         public HotkeyType TrayLeftDoubleClickAction = HotkeyType.OpenMainWindow;
-        public HotkeyType TrayMiddleClickAction = HotkeyType.PrintScreen;
+        public HotkeyType TrayMiddleClickAction = HotkeyType.ClipboardUploadWithContentViewer;
 
         public bool CheckPreReleaseUpdates = false;
 
@@ -90,7 +88,11 @@ namespace ShareX
 
         #region Theme
 
-        public List<ShareXTheme> Themes = new List<ShareXTheme>();
+        // TEMP: For backward compatibility
+        public bool UseDarkTheme = true;
+
+        public bool UseCustomTheme = true;
+        public List<ShareXTheme> Themes = ShareXTheme.GetPresets();
         public int SelectedTheme = 0;
 
         #endregion
@@ -211,6 +213,9 @@ namespace ShareX
         [Category("Clipboard"), DefaultValue(true), Description("Because default .NET image copying not supports alpha channel, background of image will be black. This option will fill background white.")]
         public bool DefaultClipboardCopyImageFillBackground { get; set; }
 
+        [Category("Clipboard"), DefaultValue(false), Description("Default .NET method can't copy image with alpha channel to clipboard. When this setting is true, ShareX copies \"PNG\" and 32 bit \"DIB\" to clipboard in order to retain image transparency.")]
+        public bool UseAlternativeClipboardCopyImage { get; set; }
+
         [Category("Image"), DefaultValue(true), Description("If JPEG exif contains orientation data then rotate image accordingly.")]
         public bool RotateImageByExifOrientationData { get; set; }
 
@@ -222,6 +227,9 @@ namespace ShareX
 
         [Category("Upload"), DefaultValue(false), Description("Accept invalid SSL certificates when uploading.")]
         public bool AcceptInvalidSSLCertificates { get; set; }
+
+        [Category("Upload"), DefaultValue(true), Description("Ignore emojis while URL encoding upload results.")]
+        public bool URLEncodeIgnoreEmoji { get; set; }
 
         [Category("Upload"), DefaultValue(true), Description("Show first time upload warning.")]
         public bool ShowUploadWarning { get; set; }

@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -323,7 +323,7 @@ namespace ShareX.UploadersLib
 
                 if (OAuth2Info.CheckOAuth(Config.GoogleDriveOAuth2Info))
                 {
-                    List<GoogleDriveFile> folders = new GoogleDrive(Config.GoogleDriveOAuth2Info).GetFolders();
+                    List<GoogleDriveFile> folders = new GoogleDrive(Config.GoogleDriveOAuth2Info).GetFolders(Config.GoogleDriveSelectedDrive.id);
 
                     if (folders != null)
                     {
@@ -341,6 +341,42 @@ namespace ShareX.UploadersLib
             {
                 ex.ShowError();
             }
+        }
+
+        private void GoogleDriveRefreshDrives()
+        {
+            try
+            {
+                if (OAuth2Info.CheckOAuth(Config.GoogleDriveOAuth2Info))
+                {
+                    List<GoogleDriveSharedDrive> drives = new GoogleDrive(Config.GoogleDriveOAuth2Info).GetDrives();
+
+                    if (drives != null)
+                    {
+                        cbGoogleDriveSharedDrive.Items.Clear();
+                        cbGoogleDriveSharedDrive.Items.Add(GoogleDrive.MyDrive);
+
+                        foreach (GoogleDriveSharedDrive drive in drives)
+                        {
+                            cbGoogleDriveSharedDrive.Items.Add(drive);
+                        }
+                        GoogleDriveSelectConfigDrive();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ex.ShowError();
+            }
+        }
+
+        private void GoogleDriveSelectConfigDrive()
+        {
+            string driveID = Config.GoogleDriveSelectedDrive?.id;
+            cbGoogleDriveSharedDrive.SelectedItem = cbGoogleDriveSharedDrive.Items
+                .OfType<GoogleDriveSharedDrive>()
+                .Where(x => x.id == driveID)
+                .FirstOrDefault();
         }
 
         #endregion Google Drive
@@ -763,7 +799,10 @@ namespace ShareX.UploadersLib
 
                 Config.PushbulletSettings.DeviceList.ForEach(pbDevice =>
                 {
-                    cboPushbulletDevices.Items.Add(pbDevice.Name ?? Resources.UploadersConfigForm_LoadSettings_Invalid_device_name);
+                    if (!string.IsNullOrEmpty(pbDevice.Name))
+                    {
+                        cboPushbulletDevices.Items.Add(pbDevice.Name);
+                    }
                 });
 
                 cboPushbulletDevices.SelectedIndex = 0;

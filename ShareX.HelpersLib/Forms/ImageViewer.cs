@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -25,7 +25,6 @@
 
 using System;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 
 namespace ShareX.HelpersLib
@@ -54,14 +53,16 @@ namespace ShareX.HelpersLib
             }
         }
 
-        public static void ShowImage(string filepath)
+        public static void ShowImage(string filePath)
         {
-            if (!string.IsNullOrEmpty(filepath) && File.Exists(filepath))
+            using (Bitmap bmp = ImageHelpers.LoadImage(filePath))
             {
-                using (Image img = ImageHelpers.LoadImage(filepath))
-                using (ImageViewer viewer = new ImageViewer(img))
+                if (bmp != null)
                 {
-                    viewer.ShowDialog();
+                    using (ImageViewer viewer = new ImageViewer(bmp))
+                    {
+                        viewer.ShowDialog();
+                    }
                 }
             }
         }

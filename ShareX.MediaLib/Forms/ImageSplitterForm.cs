@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -29,6 +29,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -36,10 +37,57 @@ namespace ShareX.MediaLib
 {
     public partial class ImageSplitterForm : Form
     {
+        public bool IsBusy { get; private set; }
+
         public ImageSplitterForm()
         {
             InitializeComponent();
             ShareXResources.ApplyTheme(this);
+            UpdateButtonStates();
+        }
+
+        private void UpdateButtonStates()
+        {
+            btnSplitImage.Enabled = btnCopyChatEmoji.Enabled = !IsBusy && !string.IsNullOrEmpty(txtImageFilePath.Text) &&
+                !string.IsNullOrEmpty(txtOutputFolder.Text) && (nudColumnCount.Value > 1 || nudRowCount.Value > 1);
+            lblColumnRow.Text = nudColumnCount.Value + " x " + nudRowCount.Value;
+        }
+
+        private List<string> SplitImage(string filePath, int rowCount, int columnCount, string outputFolder)
+        {
+            List<string> filePaths = new List<string>();
+
+            Bitmap bmp = ImageHelpers.LoadImage(filePath);
+
+            if (bmp != null)
+            {
+                List<Bitmap> images = ImageHelpers.SplitImage(bmp, rowCount, columnCount);
+
+                string originalFileName = Path.GetFileNameWithoutExtension(filePath);
+
+                for (int i = 0; i < images.Count; i++)
+                {
+                    string fileName = originalFileName + (i + 1) + ".png";
+                    string outputPath = Path.Combine(outputFolder, fileName);
+                    images[i].Save(outputPath, ImageFormat.Png);
+                    filePaths.Add(outputPath);
+                }
+            }
+
+            return filePaths;
+        }
+
+        private Task<List<string>> SplitImageAsync(string filePath, int rowCount, int columnCount, string outputFolder)
+        {
+            return Task.Run(() =>
+            {
+                return SplitImage(filePath, rowCount, columnCount, outputFolder);
+            });
+        }
+
+        private void txtImageFilePath_TextChanged(object sender, EventArgs e)
+        {
+            UpdateButtonStates();
         }
 
         private void BtnImageFilePathBrowse_Click(object sender, EventArgs e)
@@ -57,22 +105,38 @@ namespace ShareX.MediaLib
             }
         }
 
+        private void txtOutputFolder_TextChanged(object sender, EventArgs e)
+        {
+            UpdateButtonStates();
+        }
+
         private void BtnOutputFolderBrowse_Click(object sender, EventArgs e)
         {
             Helpers.BrowseFolder(txtOutputFolder);
         }
 
+        private void nudColumnCount_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateButtonStates();
+        }
+
+        private void nudRowCount_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateButtonStates();
+        }
+
         private async void BtnSplitImage_Click(object sender, EventArgs e)
         {
             string filePath = txtImageFilePath.Text;
-            int rowCount = (int)nudRowCount.Value;
-            int columnCount = (int)nudColumnCount.Value;
             string outputFolder = txtOutputFolder.Text;
+            int columnCount = (int)nudColumnCount.Value;
+            int rowCount = (int)nudRowCount.Value;
 
-            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath) && (rowCount > 1 || columnCount > 1) &&
-                !string.IsNullOrEmpty(outputFolder) && Directory.Exists(outputFolder))
+            if (!string.IsNullOrEmpty(filePath) && File.Exists(filePath) && !string.IsNullOrEmpty(outputFolder) && Directory.Exists(outputFolder) &&
+                (columnCount > 1 || rowCount > 1))
             {
-                btnSplitImage.Enabled = false;
+                IsBusy = true;
+                UpdateButtonStates();
 
                 try
                 {
@@ -88,38 +152,37 @@ namespace ShareX.MediaLib
                     ex.ShowError();
                 }
 
-                btnSplitImage.Enabled = true;
+                IsBusy = false;
+                UpdateButtonStates();
             }
         }
 
-        private List<string> SplitImage(string filePath, int rowCount, int columnCount, string outputFolder)
+        private void btnCopyChatEmoji_Click(object sender, EventArgs e)
         {
-            List<string> filePaths = new List<string>();
+            string filePath = txtImageFilePath.Text;
+            string fileName = Path.GetFileNameWithoutExtension(filePath);
+            int columnCount = (int)nudColumnCount.Value;
+            int rowCount = (int)nudRowCount.Value;
 
-            Image img = ImageHelpers.LoadImage(filePath);
+            StringBuilder sb = new StringBuilder();
 
-            if (img != null)
+            for (int y = 0; y < rowCount; y++)
             {
-                List<Image> images = ImageHelpers.SplitImage(img, rowCount, columnCount);
-
-                for (int i = 0; i < images.Count; i++)
+                for (int x = 0; x < columnCount; x++)
                 {
-                    string filename = Path.GetFileNameWithoutExtension(filePath) + (i + 1) + ".png";
-                    string outputPath = Path.Combine(outputFolder, filename);
-                    images[i].Save(outputPath, ImageFormat.Png);
-                    filePaths.Add(outputPath);
+                    int index = (y * columnCount) + x + 1;
+                    sb.Append($":{fileName}{index}:");
+                }
+
+                if (y + 1 < rowCount)
+                {
+                    sb.AppendLine();
                 }
             }
 
-            return filePaths;
-        }
+            string text = sb.ToString();
 
-        private async Task<List<string>> SplitImageAsync(string filePath, int rowCount, int columnCount, string outputFolder)
-        {
-            return await Task.Run(() =>
-            {
-                return SplitImage(filePath, rowCount, columnCount, outputFolder);
-            });
+            ClipboardHelpers.CopyText(text);
         }
     }
 }

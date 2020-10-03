@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -25,7 +25,9 @@
 
 using ShareX.HelpersLib.Properties;
 using System;
+using System.ComponentModel;
 using System.Drawing;
+using System.Reflection;
 using System.Windows.Forms;
 
 namespace ShareX.HelpersLib
@@ -41,39 +43,27 @@ namespace ShareX.HelpersLib
             }
         }
 
-        private static bool useDarkTheme;
+        private static bool useCustomTheme;
 
-        public static bool UseDarkTheme
+        public static bool UseCustomTheme
         {
             get
             {
-                return useDarkTheme && Theme != null;
+                return useCustomTheme && Theme != null;
             }
             set
             {
-                useDarkTheme = value;
+                useCustomTheme = value;
             }
         }
 
-        private static bool experimentalDarkTheme;
-
-        public static bool ExperimentalDarkTheme
-        {
-            get
-            {
-                return UseDarkTheme && experimentalDarkTheme;
-            }
-            set
-            {
-                experimentalDarkTheme = value;
-            }
-        }
+        public static bool IsDarkTheme => UseCustomTheme && Theme.IsDarkTheme;
 
         public static bool UseWhiteIcon { get; set; }
 
         public static Icon Icon => UseWhiteIcon ? Resources.ShareX_Icon_White : Resources.ShareX_Icon;
 
-        public static Image Logo => Resources.ShareX_Logo;
+        public static Bitmap Logo => Resources.ShareX_Logo;
 
         public static ShareXTheme Theme { get; set; } = new ShareXTheme();
 
@@ -84,31 +74,34 @@ namespace ShareX.HelpersLib
                 form.Icon = Icon;
             }
 
-            if (ExperimentalDarkTheme)
+            if (UseCustomTheme)
             {
-                ApplyDarkThemeToControl(form);
+                ApplyCustomThemeToControl(form);
+
+                IContainer components = form.GetType().GetField("components", BindingFlags.NonPublic | BindingFlags.Instance)?.GetValue(form) as IContainer;
+                ApplyCustomThemeToComponents(components);
 
                 if (form.IsHandleCreated)
                 {
-                    NativeMethods.UseImmersiveDarkMode(form.Handle, true);
+                    NativeMethods.UseImmersiveDarkMode(form.Handle, Theme.IsDarkTheme);
                 }
                 else
                 {
-                    form.HandleCreated += (s, e) => NativeMethods.UseImmersiveDarkMode(form.Handle, true);
+                    form.HandleCreated += (s, e) => NativeMethods.UseImmersiveDarkMode(form.Handle, Theme.IsDarkTheme);
                 }
             }
         }
 
-        private static void ApplyDarkThemeToControl(Control control)
+        private static void ApplyCustomThemeToControl(Control control)
         {
             if (control.ContextMenuStrip != null)
             {
-                control.ContextMenuStrip.Renderer = new ToolStripDarkRenderer();
+                ApplyCustomThemeToContextMenuStrip(control.ContextMenuStrip);
             }
 
             if (control is MenuButton mb && mb.Menu != null)
             {
-                mb.Menu.Renderer = new ToolStripDarkRenderer();
+                ApplyCustomThemeToContextMenuStrip(mb.Menu);
             }
 
             switch (control)
@@ -142,8 +135,14 @@ namespace ShareX.HelpersLib
                 case ListView lv:
                     lv.ForeColor = Theme.TextColor;
                     lv.BackColor = Theme.LightBackgroundColor;
-                    lv.SupportDarkTheme();
+                    lv.SupportCustomTheme();
                     return;
+                case SplitContainerCustomSplitter sccs:
+                    sccs.SplitterColor = Theme.BackgroundColor;
+                    sccs.SplitterLineColor = Theme.BorderColor;
+                    sccs.Panel1.BackColor = Theme.BackgroundColor;
+                    sccs.Panel2.BackColor = Theme.BackgroundColor;
+                    break;
                 case SplitContainer sc:
                     sc.Panel1.BackColor = Theme.BackgroundColor;
                     sc.Panel2.BackColor = Theme.BackgroundColor;
@@ -174,9 +173,12 @@ namespace ShareX.HelpersLib
                     dgv.ColumnHeadersDefaultCellStyle.SelectionForeColor = Theme.TextColor;
                     dgv.EnableHeadersVisualStyles = false;
                     break;
+                case ContextMenuStrip cms:
+                    ApplyCustomThemeToContextMenuStrip(cms);
+                    return;
                 case ToolStrip ts:
                     ts.Renderer = new ToolStripDarkRenderer();
-                    ApplyDarkThemeToToolStripItemCollection(ts.Items);
+                    ApplyCustomThemeToToolStripItemCollection(ts.Items);
                     return;
                 case LinkLabel ll:
                     ll.LinkColor = Theme.LinkColor;
@@ -188,21 +190,66 @@ namespace ShareX.HelpersLib
 
             foreach (Control child in control.Controls)
             {
-                ApplyDarkThemeToControl(child);
+                ApplyCustomThemeToControl(child);
             }
         }
 
-        private static void ApplyDarkThemeToToolStripItemCollection(ToolStripItemCollection collection)
+        private static void ApplyCustomThemeToComponents(IContainer container)
+        {
+            if (container != null)
+            {
+                foreach (IComponent component in container.Components)
+                {
+                    switch (component)
+                    {
+                        case ContextMenuStrip cms:
+                            ApplyCustomThemeToContextMenuStrip(cms);
+                            break;
+                        case ToolTip tt:
+                            tt.ForeColor = Theme.TextColor;
+                            tt.BackColor = Theme.BackgroundColor;
+                            tt.OwnerDraw = true;
+                            tt.Draw -= ToolTip_Draw;
+                            tt.Draw += ToolTip_Draw;
+                            break;
+                    }
+                }
+            }
+        }
+
+        private static void ToolTip_Draw(object sender, DrawToolTipEventArgs e)
+        {
+            e.DrawBackground();
+            e.DrawBorder();
+            e.DrawText();
+        }
+
+        public static void ApplyCustomThemeToContextMenuStrip(ContextMenuStrip cms)
+        {
+            if (cms != null)
+            {
+                cms.Renderer = new ToolStripDarkRenderer();
+                cms.Font = Theme.ContextMenuFont;
+                cms.Opacity = Theme.ContextMenuOpacityDouble;
+                ApplyCustomThemeToToolStripItemCollection(cms.Items);
+            }
+        }
+
+        private static void ApplyCustomThemeToToolStripItemCollection(ToolStripItemCollection collection)
         {
             foreach (ToolStripItem tsi in collection)
             {
                 switch (tsi)
                 {
                     case ToolStripControlHost tsch:
-                        ApplyDarkThemeToControl(tsch.Control);
+                        ApplyCustomThemeToControl(tsch.Control);
                         break;
                     case ToolStripDropDownItem tsddi:
-                        ApplyDarkThemeToToolStripItemCollection(tsddi.DropDownItems);
+                        if (tsddi.DropDown != null)
+                        {
+                            tsddi.DropDown.Opacity = Theme.ContextMenuOpacityDouble;
+                            ApplyCustomThemeToToolStripItemCollection(tsddi.DropDownItems);
+                        }
                         break;
                 }
             }

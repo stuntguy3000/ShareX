@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -66,7 +66,7 @@ namespace ShareX.UploadersLib.ImageUploaders
         {
             GoogleAuth = new GoogleOAuth2(oauth, this)
             {
-                Scope = "https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.sharing"
+                Scope = "https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/photoslibrary https://www.googleapis.com/auth/photoslibrary.sharing"
             };
         }
 
@@ -90,6 +90,11 @@ namespace ShareX.UploadersLib.ImageUploaders
         public bool GetAccessToken(string code)
         {
             return GoogleAuth.GetAccessToken(code);
+        }
+
+        public OAuthUserInfo GetUserInfo()
+        {
+            return GoogleAuth.GetUserInfo();
         }
 
         public GooglePhotosAlbum CreateAlbum(string albumName)
