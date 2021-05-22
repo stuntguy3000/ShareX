@@ -65,7 +65,7 @@ namespace ShareX.HelpersLib
 
         public static Bitmap Logo => Resources.ShareX_Logo;
 
-        public static ShareXTheme Theme { get; set; } = new ShareXTheme();
+        public static ShareXTheme Theme { get; set; } = ShareXTheme.DarkTheme;
 
         public static void ApplyTheme(Form form, bool setIcon = true)
         {
@@ -92,7 +92,7 @@ namespace ShareX.HelpersLib
             }
         }
 
-        private static void ApplyCustomThemeToControl(Control control)
+        public static void ApplyCustomThemeToControl(Control control)
         {
             if (control.ContextMenuStrip != null)
             {
@@ -192,6 +192,14 @@ namespace ShareX.HelpersLib
             {
                 ApplyCustomThemeToControl(child);
             }
+
+            switch (control)
+            {
+                case TabToTreeView tttv:
+                    tttv.LeftPanelBackColor = Theme.DarkBackgroundColor;
+                    tttv.SeparatorColor = Theme.SeparatorDarkColor;
+                    break;
+            }
         }
 
         private static void ApplyCustomThemeToComponents(IContainer container)
@@ -221,7 +229,7 @@ namespace ShareX.HelpersLib
         {
             e.DrawBackground();
             e.DrawBorder();
-            e.DrawText();
+            e.DrawText(TextFormatFlags.VerticalCenter | TextFormatFlags.LeftAndRightPadding);
         }
 
         public static void ApplyCustomThemeToContextMenuStrip(ContextMenuStrip cms)

@@ -26,7 +26,7 @@
 using ShareX.HelpersLib;
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ShareX
@@ -88,6 +88,8 @@ namespace ShareX
         private Size titleRenderSize;
         private Size textRenderSize;
         private Size totalRenderSize;
+        private bool isMouseDragging;
+        private Point dragStart;
 
         protected override CreateParams CreateParams
         {
@@ -115,8 +117,10 @@ namespace ShareX
             }
             else if (!string.IsNullOrEmpty(Config.Text))
             {
-                textRenderSize = TextRenderer.MeasureText(Config.Text, Config.TextFont, Config.Size.Offset(-Config.TextPadding * 2),
-                    TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
+                Size size = Config.Size.Offset(-Config.TextPadding * 2);
+                textRenderSize = TextRenderer.MeasureText(Config.Text, Config.TextFont, size,
+                    TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl | TextFormatFlags.EndEllipsis);
+                textRenderSize = new Size(textRenderSize.Width, Math.Min(textRenderSize.Height, size.Height));
                 totalRenderSize = textRenderSize;
 
                 if (!string.IsNullOrEmpty(Config.Title))
@@ -224,7 +228,7 @@ namespace ShareX
                         g.FillRectangle(brush, textRect);
                     }
 
-                    TextRenderer.DrawText(g, Config.URL, Config.TextFont, textRect.Offset(-urlPadding), Config.TextColor, TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
+                    TextRenderer.DrawText(g, Config.URL, Config.TextFont, textRect.Offset(-urlPadding), Color.White, TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
                 }
             }
             else if (!string.IsNullOrEmpty(Config.Text))
@@ -242,7 +246,8 @@ namespace ShareX
                     textRect = new Rectangle(Config.TextPadding, Config.TextPadding, textRenderSize.Width + 2, textRenderSize.Height + 2);
                 }
 
-                TextRenderer.DrawText(g, Config.Text, Config.TextFont, textRect, Config.TextColor, TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
+                TextRenderer.DrawText(g, Config.Text, Config.TextFont, textRect, Config.TextColor,
+                    TextFormatFlags.WordBreak | TextFormatFlags.TextBoxControl | TextFormatFlags.EndEllipsis);
             }
 
             using (Pen borderPen = new Pen(Config.BorderColor))
@@ -281,31 +286,57 @@ namespace ShareX
             {
                 case ToastClickAction.AnnotateImage:
                     if (!string.IsNullOrEmpty(Config.FilePath) && Helpers.IsImageFile(Config.FilePath))
+                    {
                         TaskHelpers.AnnotateImageFromFile(Config.FilePath);
+                    }
                     break;
                 case ToastClickAction.CopyImageToClipboard:
                     if (!string.IsNullOrEmpty(Config.FilePath))
+                    {
                         ClipboardHelpers.CopyImageFromFile(Config.FilePath);
+                    }
+                    break;
+                case ToastClickAction.CopyFile:
+                    if (!string.IsNullOrEmpty(Config.FilePath))
+                    {
+                        ClipboardHelpers.CopyFile(Config.FilePath);
+                    }
+                    break;
+                case ToastClickAction.CopyFilePath:
+                    if (!string.IsNullOrEmpty(Config.FilePath))
+                    {
+                        ClipboardHelpers.CopyText(Config.FilePath);
+                    }
                     break;
                 case ToastClickAction.CopyUrl:
                     if (!string.IsNullOrEmpty(Config.URL))
+                    {
                         ClipboardHelpers.CopyText(Config.URL);
+                    }
                     break;
                 case ToastClickAction.OpenFile:
                     if (!string.IsNullOrEmpty(Config.FilePath))
+                    {
                         Helpers.OpenFile(Config.FilePath);
+                    }
                     break;
                 case ToastClickAction.OpenFolder:
                     if (!string.IsNullOrEmpty(Config.FilePath))
+                    {
                         Helpers.OpenFolderWithFile(Config.FilePath);
+                    }
                     break;
                 case ToastClickAction.OpenUrl:
                     if (!string.IsNullOrEmpty(Config.URL))
+                    {
                         URLHelpers.OpenURL(Config.URL);
+                    }
                     break;
                 case ToastClickAction.Upload:
                     if (!string.IsNullOrEmpty(Config.FilePath))
+                    {
                         UploadManager.UploadFile(Config.FilePath);
+                    }
                     break;
             }
         }
@@ -325,12 +356,48 @@ namespace ShareX
         private void NotificationForm_MouseLeave(object sender, EventArgs e)
         {
             isMouseInside = false;
+            isMouseDragging = false;
             Refresh();
 
             if (isDurationEnd)
             {
                 StartClosing();
             }
+        }
+
+        private void NotificationForm_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                dragStart = e.Location;
+                isMouseDragging = true;
+            }
+        }
+
+        private void NotificationForm_MouseMove(object sender, MouseEventArgs e)
+        {
+            // We add a threshold before triggering the drag-drop operation in order to fix MouseClick
+            if (isMouseDragging)
+            {
+                // The radius around the mouse, until a drag-drop operation gets triggered
+                int dragThreshold = 20;
+
+                Rectangle dragThresholdRectangle = new Rectangle(dragStart.X - dragThreshold, dragStart.Y - dragThreshold, dragThreshold * 2, dragThreshold * 2);
+
+                bool isOverThreshold = !dragThresholdRectangle.Contains(e.Location);
+                if (isOverThreshold && !string.IsNullOrEmpty(Config.FilePath) && File.Exists(Config.FilePath))
+                {
+                    IDataObject dataObject = new DataObject(DataFormats.FileDrop, new string[] { Config.FilePath });
+                    DoDragDrop(dataObject, DragDropEffects.Copy | DragDropEffects.Move);
+
+                    isMouseDragging = false;
+                }
+            }
+        }
+
+        private void NotificationForm_MouseUp(object sender, MouseEventArgs e)
+        {
+            isMouseDragging = false;
         }
 
         #region Windows Form Designer generated code
@@ -384,6 +451,9 @@ namespace ShareX
             MouseClick += new MouseEventHandler(NotificationForm_MouseClick);
             MouseEnter += new EventHandler(NotificationForm_MouseEnter);
             MouseLeave += new EventHandler(NotificationForm_MouseLeave);
+            MouseDown += new MouseEventHandler(NotificationForm_MouseDown);
+            MouseMove += new MouseEventHandler(NotificationForm_MouseMove);
+            MouseUp += new MouseEventHandler(NotificationForm_MouseUp);
             ResumeLayout(false);
         }
 

@@ -190,10 +190,26 @@ namespace ShareX.HelpersLib
         NearestNeighbor
     }
 
+    public enum ArrowHeadDirection // Localized
+    {
+        End,
+        Start,
+        Both
+    }
+
     public enum FFmpegArchitecture
     {
         win64,
         win32,
         macos64
+    }
+
+    public enum StepType // Localized
+    {
+        Numbers,
+        LettersUppercase,
+        LettersLowercase,
+        RomanNumeralsUppercase,
+        RomanNumeralsLowercase
     }
 }

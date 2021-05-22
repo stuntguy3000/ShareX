@@ -283,6 +283,11 @@ namespace ShareX.HelpersLib
                 {
                     if (!checkContainsImage || Clipboard.ContainsImage())
                     {
+                        if (HelpersOptions.UseAlternativeClipboardGetImage)
+                        {
+                            return GetImageAlternative2();
+                        }
+
                         return (Bitmap)Clipboard.GetImage();
                     }
                 }
@@ -343,6 +348,56 @@ namespace ShareX.HelpersLib
                 if (dataObject.GetDataPresent(DataFormats.Bitmap, true))
                 {
                     return dataObject.GetData(DataFormats.Bitmap, true) as Image;
+                }
+            }
+
+            return null;
+        }
+
+        private static Bitmap GetImageAlternative2()
+        {
+            IDataObject dataObject = Clipboard.GetDataObject();
+
+            if (dataObject != null)
+            {
+                string[] dataFormats = dataObject.GetFormats(false);
+
+                if (dataFormats.Contains(FORMAT_PNG))
+                {
+                    using (MemoryStream ms = dataObject.GetData(FORMAT_PNG) as MemoryStream)
+                    {
+                        if (ms != null)
+                        {
+                            using (Bitmap bmp = new Bitmap(ms))
+                            {
+                                return ClipboardHelpersEx.CloneImage(bmp);
+                            }
+                        }
+                    }
+                }
+                else if (dataFormats.Contains(DataFormats.Dib))
+                {
+                    using (MemoryStream ms = dataObject.GetData(DataFormats.Dib) as MemoryStream)
+                    {
+                        if (ms != null)
+                        {
+                            return ClipboardHelpersEx.ImageFromClipboardDib(ms.ToArray());
+                        }
+                    }
+                }
+                else if (dataFormats.Contains(FORMAT_17))
+                {
+                    using (MemoryStream ms = dataObject.GetData(FORMAT_17) as MemoryStream)
+                    {
+                        if (ms != null)
+                        {
+                            return ClipboardHelpersEx.DIBV5ToBitmap(ms.ToArray());
+                        }
+                    }
+                }
+                else if (dataFormats.Contains(DataFormats.Bitmap))
+                {
+                    return dataObject.GetData(DataFormats.Bitmap, true) as Bitmap;
                 }
             }
 
@@ -452,6 +507,48 @@ namespace ShareX.HelpersLib
             sb.Append(endHTML);
 
             return sb.ToString();
+        }
+
+        public static bool ContainsImage()
+        {
+            try
+            {
+                return Clipboard.ContainsImage();
+            }
+            catch (Exception e)
+            {
+                DebugHelper.WriteException(e);
+            }
+
+            return false;
+        }
+
+        public static bool ContainsText()
+        {
+            try
+            {
+                return Clipboard.ContainsText();
+            }
+            catch (Exception e)
+            {
+                DebugHelper.WriteException(e);
+            }
+
+            return false;
+        }
+
+        public static bool ContainsFileDropList()
+        {
+            try
+            {
+                return Clipboard.ContainsFileDropList();
+            }
+            catch (Exception e)
+            {
+                DebugHelper.WriteException(e);
+            }
+
+            return false;
         }
     }
 }

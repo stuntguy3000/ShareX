@@ -377,6 +377,7 @@ namespace ShareX.ScreenCaptureLib
 
                 if (IsAnnotationMode && ShapeManager.ToolbarCreated)
                 {
+                    ShapeManager.UpdateMenuMaxWidth(ClientSize.Width);
                     ShapeManager.UpdateMenuPosition();
                 }
             }
@@ -390,12 +391,10 @@ namespace ShareX.ScreenCaptureLib
                 PanningStrech.Y -= deltaY;
             }
 
-            Size panLimitSize = new Size(
-                Math.Min((int)Math.Round(ClientArea.Width * 0.25f), CanvasRectangle.Width),
+            Size panLimitSize = new Size(Math.Min((int)Math.Round(ClientArea.Width * 0.25f), CanvasRectangle.Width),
                 Math.Min((int)Math.Round(ClientArea.Height * 0.25f), CanvasRectangle.Height));
 
-            Rectangle limitRectangle = new Rectangle(
-                ClientArea.X + panLimitSize.Width, ClientArea.Y + panLimitSize.Height,
+            Rectangle limitRectangle = new Rectangle(ClientArea.X + panLimitSize.Width, ClientArea.Y + panLimitSize.Height,
                 ClientArea.Width - (panLimitSize.Width * 2), ClientArea.Height - (panLimitSize.Height * 2));
 
             deltaX = Math.Max(deltaX, limitRectangle.Left - CanvasRectangle.Right);
@@ -453,9 +452,8 @@ namespace ShareX.ScreenCaptureLib
 
         private void UpdateCenterOffset()
         {
-            CanvasCenterOffset = new Vector2(
-                (CanvasRectangle.X + (CanvasRectangle.Width / 2f)) - (ClientArea.Width / 2f),
-                (CanvasRectangle.Y + (CanvasRectangle.Height / 2f)) - (ClientArea.Height / 2f));
+            CanvasCenterOffset = new Vector2(CanvasRectangle.X + (CanvasRectangle.Width / 2f) - (ClientArea.Width / 2f),
+                CanvasRectangle.Y + (CanvasRectangle.Height / 2f) - (ClientArea.Height / 2f));
         }
 
         public void CenterCanvas()
@@ -573,7 +571,7 @@ namespace ShareX.ScreenCaptureLib
                 return;
             }
 
-            if (!isKeyAllowed && timerStart.ElapsedMilliseconds < 1000)
+            if (!isKeyAllowed && timerStart.ElapsedMilliseconds < Options.InputDelay)
             {
                 return;
             }
@@ -1433,8 +1431,7 @@ namespace ShareX.ScreenCaptureLib
                 {
                     ImageFilePath = imageFilePath;
                     UpdateTitle();
-                    // TODO: Translate
-                    ShapeManager.ShowMenuTooltip("Image saved");
+                    ShapeManager.ShowMenuTooltip(Resources.ImageSaved);
                 }
             }
         }
@@ -1451,8 +1448,7 @@ namespace ShareX.ScreenCaptureLib
                 {
                     ImageFilePath = imageFilePath;
                     UpdateTitle();
-                    // TODO: Translate
-                    ShapeManager.ShowMenuTooltip("Image saved");
+                    ShapeManager.ShowMenuTooltip(Resources.ImageSavedAs);
                 }
             }
         }
@@ -1464,8 +1460,7 @@ namespace ShareX.ScreenCaptureLib
                 Bitmap bmp = ReceiveImageForTask();
 
                 CopyImageRequested(bmp);
-                // TODO: Translate
-                ShapeManager.ShowMenuTooltip("Image copied");
+                ShapeManager.ShowMenuTooltip(Resources.ImageCopied);
             }
         }
 
@@ -1476,8 +1471,7 @@ namespace ShareX.ScreenCaptureLib
                 Bitmap bmp = ReceiveImageForTask();
 
                 UploadImageRequested(bmp);
-                // TODO: Translate
-                ShapeManager.ShowMenuTooltip("Image uploading");
+                ShapeManager.ShowMenuTooltip(Resources.ImageUploading);
             }
         }
 

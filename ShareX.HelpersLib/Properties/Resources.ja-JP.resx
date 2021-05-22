@@ -172,7 +172,7 @@
     <value>ユーザー ログイン名</value>
   </data>
   <data name="HotkeyType_ImageEffects" xml:space="preserve">
-    <value>画像の効果</value>
+    <value>画像エフェクト</value>
   </data>
   <data name="ShapeType_DrawingImageScreen" xml:space="preserve">
     <value>描画: 画像 (スクリーン)</value>
@@ -458,7 +458,7 @@
     <value>手動</value>
   </data>
   <data name="AfterCaptureTasks_AddImageEffects" xml:space="preserve">
-    <value>画像の効果/透かしを追加</value>
+    <value>画像エフェクトを追加</value>
   </data>
   <data name="AfterCaptureTasks_DeleteFile" xml:space="preserve">
     <value>ローカル ファイルを削除</value>
@@ -1010,7 +1010,7 @@
     <value>ShareX ウィンドウを表示</value>
   </data>
   <data name="HotkeyType_ScreenColorPicker" xml:space="preserve">
-    <value>カラー ピッカー (ルーペ)</value>
+    <value>スクリーン カラー ピッカー</value>
   </data>
   <data name="PrintTextForm_LoadSettings_Name___0___Size___1_" xml:space="preserve">
     <value>名前: {0}, サイズ: {1}</value>
@@ -1170,5 +1170,32 @@
   </data>
   <data name="HotkeyType_VideoConverter" xml:space="preserve">
     <value>動画の変換</value>
+  </data>
+  <data name="ArrowHeadDirection_Both" xml:space="preserve">
+    <value>両端</value>
+  </data>
+  <data name="ArrowHeadDirection_End" xml:space="preserve">
+    <value>終点のみ</value>
+  </data>
+  <data name="ArrowHeadDirection_Start" xml:space="preserve">
+    <value>始点のみ</value>
+  </data>
+  <data name="HotkeyType_ImageSplitter" xml:space="preserve">
+    <value>画像の分割</value>
+  </data>
+  <data name="HotkeyType_ImageThumbnailer" xml:space="preserve">
+    <value>画像のサムネイル作成</value>
+  </data>
+  <data name="HotkeyType_ClipboardViewer" xml:space="preserve">
+    <value>クリップボードビューアー</value>
+  </data>
+  <data name="HotkeyType_ClipboardViewer_Category" xml:space="preserve">
+    <value>ツール</value>
+  </data>
+  <data name="HotkeyType_InspectWindow_Category" xml:space="preserve">
+    <value>ツール</value>
+  </data>
+  <data name="HotkeyType_InspectWindow" xml:space="preserve">
+    <value>ウィンドウの調査</value>
   </data>
 </root>

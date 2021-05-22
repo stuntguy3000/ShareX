@@ -46,10 +46,30 @@ namespace ShareX.MediaLib
             InitializeComponent();
             ShareXResources.ApplyTheme(this);
 
-            cbOrientation.Items.AddRange(Enum.GetNames(typeof(Orientation)));
-            cbOrientation.SelectedIndex = (int)Options.Orientation;
+            if (Options.Orientation == Orientation.Horizontal)
+            {
+                rbOrientationHorizontal.Checked = true;
+            }
+            else
+            {
+                rbOrientationVertical.Checked = true;
+            }
+
             UpdateAlignmentComboBox();
             nudSpace.SetValue(Options.Space);
+            cbAutoFillBackground.Checked = Options.AutoFillBackground;
+        }
+
+        private void UpdateOrientation()
+        {
+            if (rbOrientationHorizontal.Checked)
+            {
+                Options.Orientation = Orientation.Horizontal;
+            }
+            else
+            {
+                Options.Orientation = Orientation.Vertical;
+            }
         }
 
         private void UpdateAlignmentComboBox()
@@ -123,9 +143,15 @@ namespace ShareX.MediaLib
             }
         }
 
-        private void cbOrientation_SelectedIndexChanged(object sender, EventArgs e)
+        private void rbOrientationHorizontal_CheckedChanged(object sender, EventArgs e)
         {
-            Options.Orientation = (Orientation)cbOrientation.SelectedIndex;
+            UpdateOrientation();
+            UpdateAlignmentComboBox();
+        }
+
+        private void rbOrientationVertical_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateOrientation();
             UpdateAlignmentComboBox();
         }
 
@@ -137,6 +163,11 @@ namespace ShareX.MediaLib
         private void nudSpace_ValueChanged(object sender, EventArgs e)
         {
             Options.Space = (int)nudSpace.Value;
+        }
+
+        private void cbAutoFillBackground_CheckedChanged(object sender, EventArgs e)
+        {
+            Options.AutoFillBackground = cbAutoFillBackground.Checked;
         }
 
         private void btnCombine_Click(object sender, EventArgs e)
@@ -164,7 +195,7 @@ namespace ShareX.MediaLib
 
                     if (images.Count > 1)
                     {
-                        Bitmap output = ImageHelpers.CombineImages(images, Options.Orientation, Options.Alignment, Options.Space);
+                        Bitmap output = ImageHelpers.CombineImages(images, Options.Orientation, Options.Alignment, Options.Space, Options.AutoFillBackground);
 
                         OnProcessRequested(output);
                     }

@@ -229,16 +229,16 @@
     <value>効果</value>
   </data>
   <data name="lblImageEffectsNote.Text" xml:space="preserve">
-    <value>「キャプチャー後のタスク→ 画像の効果/透かしを追加」から画像効果の有効/無効の切り替えができます</value>
+    <value>「キャプチャー後のタスク→ 画像エフェクトの追加」から画像エフェクトの有効/無効の切り替えができます</value>
   </data>
   <data name="chkShowImageEffectsWindowAfterCapture.Text" xml:space="preserve">
-    <value>キャプチャー後に画像の効果ウィンドウを表示する</value>
+    <value>キャプチャー後に画像エフェクトウィンドウを表示する</value>
   </data>
   <data name="cbImageEffectOnlyRegionCapture.Text" xml:space="preserve">
-    <value>領域キャプチャーにのみ効果を適用する</value>
+    <value>領域キャプチャーにのみ画像エフェクトを適用する</value>
   </data>
   <data name="btnImageEffects.Text" xml:space="preserve">
-    <value>画像効果の構成...</value>
+    <value>画像エフェクトの構成...</value>
   </data>
   <data name="tpThumbnail.Text" xml:space="preserve">
     <value>サムネイル</value>
@@ -508,7 +508,7 @@
     <value>追加...</value>
   </data>
   <data name="lblToolsScreenColorPickerFormat.Text" xml:space="preserve">
-    <value>カラーピッカー (ルーペ)のコピー書式:</value>
+    <value>スクリーン カラーピッカーのコピー書式:</value>
   </data>
   <data name="chkOverrideToolsSettings.Text" xml:space="preserve">
     <value>ツール設定を上書きする</value>
@@ -548,5 +548,83 @@
   </data>
   <data name="lblActionsNote.Text" xml:space="preserve">
     <value>「キャプチャー後のタスク→アクションの実行」で有効/無効の切り替えができます</value>
+  </data>
+  <data name="btnAutoIncrementNumber.Text" xml:space="preserve">
+    <value>変更を確定</value>
+  </data>
+  <data name="cbOverrideScreenshotsFolder.Text" xml:space="preserve">
+    <value>「スクリーンショットのフォルダ」を上書きする</value>
+  </data>
+  <data name="cbURLRegexReplace.Text" xml:space="preserve">
+    <value>正規表現を使ってURLを置換する</value>
+  </data>
+  <data name="lblAutoIncrementNumber.Text" xml:space="preserve">
+    <value>ファイル名で使う連番:</value>
+  </data>
+  <data name="lblURLRegexReplacePattern.Text" xml:space="preserve">
+    <value>正規表現パターン</value>
+  </data>
+  <data name="lblURLRegexReplaceReplacement.Text" xml:space="preserve">
+    <value>置換パターン</value>
+  </data>
+  <data name="lblToolsScreenColorPickerFormatCtrl.Text" xml:space="preserve">
+    <value>スクリーン カラーピッカーのコピー書式(Ctrl＋クリック):</value>
+  </data>
+  <data name="lblToolsScreenColorPickerInfoText.Text" xml:space="preserve">
+    <value>マウスを乗せたときの色表示の形式:</value>
+  </data>
+  <data name="cbDisableNotifications.Text" xml:space="preserve">
+    <value>通知を無効にする</value>
+  </data>
+  <data name="cbDisableNotificationsOnFullscreen.Text" xml:space="preserve">
+    <value>フルスクリーンの時に通知を無効にする</value>
+  </data>
+  <data name="cbShowToastNotificationAfterTaskCompleted.Text" xml:space="preserve">
+    <value>タスク完了後に通知を表示する</value>
+  </data>
+  <data name="gbToastWindow.Text" xml:space="preserve">
+    <value>トースター通知</value>
+  </data>
+  <data name="cbUseCustomCaptureSound.Text" xml:space="preserve">
+    <value>キャプチャー時のサウンドを変更する</value>
+  </data>
+  <data name="cbUseCustomErrorSound.Text" xml:space="preserve">
+    <value>エラー発生時のサウンドを変更する</value>
+  </data>
+  <data name="cbUseCustomTaskCompletedSound.Text" xml:space="preserve">
+    <value>カスタムタスク完了時のサウンドを変更する</value>
+  </data>
+  <data name="lblToastWindowDuration.Text" xml:space="preserve">
+    <value>表示している時間</value>
+  </data>
+  <data name="lblToastWindowDurationSeconds.Text" xml:space="preserve">
+    <value>秒</value>
+  </data>
+  <data name="lblToastWindowFadeDuration.Text" xml:space="preserve">
+    <value>消えるまでの時間</value>
+  </data>
+  <data name="lblToastWindowFadeDurationSeconds.Text" xml:space="preserve">
+    <value>秒</value>
+  </data>
+  <data name="lblToastWindowLeftClickAction.Text" xml:space="preserve">
+    <value>左クリック時のアクション:</value>
+  </data>
+  <data name="lblToastWindowMiddleClickAction.Text" xml:space="preserve">
+    <value>中央クリック時のアクション:</value>
+  </data>
+  <data name="lblToastWindowRightClickAction.Text" xml:space="preserve">
+    <value>右クリック時のアクション:</value>
+  </data>
+  <data name="lblToastWindowSize.Text" xml:space="preserve">
+    <value>サイズ:</value>
+  </data>
+  <data name="lblToastWindowSizeX.Text" xml:space="preserve">
+    <value>x</value>
+  </data>
+  <data name="lblToastWindowPlacement.Text" xml:space="preserve">
+    <value>表示位置</value>
+  </data>
+  <data name="tpNotifications.Text" xml:space="preserve">
+    <value>通知</value>
   </data>
 </root>

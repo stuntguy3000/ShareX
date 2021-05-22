@@ -132,6 +132,8 @@ namespace ShareX
         {
             if (IsItemSelected)
             {
+                SelectedItem.Update();
+
                 if (SelectedItem.IsShortenedURLExist)
                 {
                     URLHelpers.OpenURL(SelectedItem.Info.Result.ShortenedURL);
@@ -399,12 +401,9 @@ namespace ShareX
 
         public void ShowResponse()
         {
-            if (IsItemSelected && SelectedItem.Info.Result != null && !string.IsNullOrEmpty(SelectedItem.Info.Result.Response))
+            if (IsItemSelected && SelectedItem.Info.Result != null)
             {
-                using (ResponseForm form = new ResponseForm(SelectedItem.Info.Result.Response))
-                {
-                    form.ShowDialog();
-                }
+                ResponseForm.ShowInstance(SelectedItem.Info.Result);
             }
         }
 

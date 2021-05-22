@@ -25,6 +25,7 @@
 
 using ShareX.HelpersLib;
 using ShareX.HistoryLib;
+using ShareX.Properties;
 using ShareX.ScreenCaptureLib;
 using ShareX.UploadersLib;
 using ShareX.UploadersLib.FileUploaders;
@@ -160,16 +161,14 @@ namespace ShareX
 
             if (e is UnauthorizedAccessException || e is FileNotFoundException)
             {
-                // TODO: Translate
-                message = "Your anti-virus software or the controlled folder access feature in Windows 10 could be blocking ShareX.";
+                message = Resources.YourAntiVirusSoftwareOrTheControlledFolderAccessFeatureInWindows10CouldBeBlockingShareX;
             }
             else
             {
                 message = e.Message;
             }
 
-            // TODO: Translate
-            TaskHelpers.ShowNotificationTip(message, "ShareX - " + "Failed to save settings", 5000);
+            TaskHelpers.ShowNotificationTip(message, "ShareX - " + Resources.FailedToSaveSettings, 5000);
 
             settingsSaveFailWarningCount++;
         }
@@ -219,6 +218,19 @@ namespace ShareX
             if (Settings.IsUpgradeFrom("13.0.2"))
             {
                 Settings.UseCustomTheme = Settings.UseDarkTheme;
+            }
+
+            if (Settings.IsUpgradeFrom("13.3.1") && Settings.Themes != null)
+            {
+                Settings.Themes.Add(ShareXTheme.NordDarkTheme);
+                Settings.Themes.Add(ShareXTheme.NordLightTheme);
+                Settings.Themes.Add(ShareXTheme.DraculaTheme);
+            }
+
+            if (Settings.IsUpgradeFrom("13.4.0"))
+            {
+                DefaultTaskSettings.GeneralSettings.ShowToastNotificationAfterTaskCompleted =
+                    DefaultTaskSettings.GeneralSettings.PopUpNotification != PopUpNotificationType.None;
             }
         }
 

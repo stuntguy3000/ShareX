@@ -32,7 +32,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 #if WindowsStore
@@ -78,7 +77,7 @@ namespace ShareX
 
         public static string TitleLong => $"{Title} ({Build})";
 
-        public static bool Dev { get; } = true;
+        public static bool Dev { get; } = false;
         public static bool MultiInstance { get; private set; }
         public static bool Portable { get; private set; }
         public static bool PortableApps { get; private set; }
@@ -242,7 +241,7 @@ namespace ShareX
 
         #endregion Paths
 
-        private static bool closeSequenceStarted, restarting;
+        private static bool closeSequenceStarted, restartRequested, restartAsAdmin;
 
         [STAThread]
         private static void Main(string[] args)
@@ -281,10 +280,18 @@ namespace ShareX
                 Run();
             }
 
-            if (restarting)
+            if (restartRequested)
             {
                 DebugHelper.WriteLine("ShareX restarting.");
-                Process.Start(Application.ExecutablePath);
+
+                if (restartAsAdmin)
+                {
+                    TaskHelpers.RunShareXAsAdmin("-silent");
+                }
+                else
+                {
+                    Process.Start(Application.ExecutablePath);
+                }
             }
         }
 
@@ -320,13 +327,13 @@ namespace ShareX
             RegisterExtensions();
             CheckPuushMode();
             DebugWriteFlags();
-            CleanTempFiles();
 
             SettingManager.LoadInitialSettings();
 
             Uploader.UpdateServicePointManager();
             UpdateManager = new GitHubUpdateManager("ShareX", "ShareX", Dev, Portable);
             LanguageHelper.ChangeLanguage(Settings.Language);
+            CleanupManager.CleanupAsync();
             Helpers.TryFixHandCursor();
 
             DebugHelper.WriteLine("MainForm init started.");
@@ -354,9 +361,10 @@ namespace ShareX
             }
         }
 
-        public static void Restart()
+        public static void Restart(bool asAdmin = false)
         {
-            restarting = true;
+            restartRequested = true;
+            restartAsAdmin = asAdmin;
             Application.Exit();
         }
 
@@ -655,33 +663,6 @@ namespace ShareX
             {
                 DebugHelper.WriteLine("Flags: " + output);
             }
-        }
-
-        private static void CleanTempFiles()
-        {
-            Task.Run(() =>
-            {
-                try
-                {
-                    string tempFolder = Path.GetTempPath();
-
-                    if (!string.IsNullOrEmpty(tempFolder))
-                    {
-                        string folderPath = Path.Combine(tempFolder, "ShareX");
-
-                        if (Directory.Exists(folderPath))
-                        {
-                            Directory.Delete(folderPath, true);
-
-                            DebugHelper.WriteLine($"Temp files cleaned: {folderPath}");
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    DebugHelper.WriteException(e);
-                }
-            });
         }
     }
 }
